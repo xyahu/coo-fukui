@@ -2,15 +2,16 @@
 \usepackage[utf8]{inputenc}
 \usepackage[margin=1in]{geometry}  % 调整页面边距
 \usepackage{titling}               % 控制标题位置
-\setlength{\droptitle}{-3.0cm}     % 将标题上移3厘米
+\usepackage{booktabs}              % 表格宏包
 
+\setlength{\droptitle}{-3.0cm}     % 将标题上移3.0厘米
 
-\title{Sample Document}
+\title{Medical Image Classification using Support Vector Machine}
 \author{Your Name}
-\date{\today}
-
+\date{2024.11.30}
 
 \begin{document}
+
 \twocolumn[
 \maketitle
 
@@ -23,7 +24,7 @@ This is Abstract chapter.
 ]
 
 \section{Introduce}
-啊啊啊This is Introduce chapter.
+This is Introduce chapter.
 
 \section{Related Works}
 This is Related Works chapter.
@@ -33,6 +34,20 @@ This is Method chapter.
 
 \section{Experiments}
 This is Experiments chapter.
+% 插入三线表
+\begin{table}[h]
+    \centering
+    \caption{three line table sample}
+    \begin{tabular}{cccc}
+    \toprule
+    col1 & col2 & col3 & col4 \\
+    \midrule
+    data11 & data12 & data13 & data14 \\
+    data21 & data22 & data23 & data24 \\
+    data31 & data32 & data33 & data34 \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
 
 \section{Conclusion}
 This is Conclusion chapter.
