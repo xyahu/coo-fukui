@@ -28,6 +28,54 @@ class ImageDataset(Dataset):
     def __len__(self):
         return max(len(self.files_A), len(self.files_B))
     
+class NormalImageDataset(Dataset):
+    def __init__(self, root, transforms_=None,folder_name = 'total-val', config=None):
+        from back.config import Config
+        self.config = config if config is not None else Config()
+        self.load_in_memory = self.config.opt.load_in_memory if self.config.opt is not None else 1
+        self.cmd_bytes = self.config.cmd_bytes if config is not None else 160
+        self.root = root
+        self.transform = transforms.Compose(transforms_) if transforms_ else None
+
+        # 只读取一个文件夹中的图片
+        self.files_A = sorted([
+            f for f in glob.glob(os.path.join(root, folder_name) + '/*.*') if not f.endswith('Thumbs.db')
+        ])
+        self.length = len(self.files_A)
+        self.data_A = []
+
+        if self.load_in_memory != 0:
+            path = os.path.join('\\', self.root)
+            loop = tqdm.tqdm(
+                enumerate(self.files_A),
+                total=len(self.files_A),
+                colour='red',
+                ncols=self.cmd_bytes
+            )
+            for idx, file in loop:
+                # 尝试打开图像文件
+                try:
+                    with Image.open(file) as img:
+                        self.data_A.append(self.transform(img.convert('RGB')))
+                except IOError:
+                    print(f"Skipping non-image file: {file}")
+                loop.set_postfix_str(
+                    f" Loading all images of `{path:>20}` into memory. {idx+1:08d}/{self.length:08d}"
+                )
+
+    def __getitem__(self, index):
+        if self.load_in_memory != 0:
+            item_A = self.data_A[index % len(self.data_A)]
+        else:
+            item_A = self.transform(
+                Image.open(self.files_A[index % len(self.files_A)]).convert('RGB')
+            )
+        # 仅返回 {'A': item_A}
+        return {'A': item_A}
+
+    def __len__(self):
+        return len(self.files_A)
+    
 class FromToDataset(Dataset):
     def __init__(self,root,transforms_=None, unaligned=False,to_a='pet',from_b='ct',config=None):
         from back.config import Config

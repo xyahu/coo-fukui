@@ -15,6 +15,8 @@ class CVS_Module(nn.Module):
         else:
             self.model_name = model_name
         self.config = None
+        
+        self.Tensor = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.FloatTensor
 
     
     def init(self,config):

@@ -25,9 +25,6 @@ class GAN_Template(GAN_base):
         # self.generator = UDCTS_Generator()
         self.generator = DenseDoubleUnet_G()
         self.discriminator = UDCTS_Discriminator()
-
-        self.Tensor = torch.cuda.FloatTensor if self.cuda else torch.FloatTensor
-       
         self.mse_loss_module = torch.nn.MSELoss()
 
         

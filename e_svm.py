@@ -23,7 +23,7 @@ class SVM(nn.Module):
 
 class SVM_Vector(Base_Model_Vector):
     def __init__(self, c, m):
-        super().__init__(c, m)
+        super(SVM_Vector,self).__init__(c, m)
         
     def compute_loss(self, y_pred, y_truth, x_input=None):
         return torch.mean(torch.clamp(1 - y_pred.squeeze() * y_truth, min=0))
@@ -34,10 +34,11 @@ if __name__ == "__main__":
     m = SVM_Vector(c,SVM(HWC))
     m = c.adapt_cuda(m)
     m.init(c)
-    x = m.get_random_tensor_by_tuple(HWC)
-    print(x.shape)
-    y_pred = m.model(x)
-    print(y_pred)
-    m.print_model_info()
+    m.init_config_dataset(A_train='A-train',B_train='B-train',A_val = 'A-val',B_val='B-val')
+    # m.print_model_info()
     m.save_model_info()
+    
+    m.train_s()
+    
+    
     pass
