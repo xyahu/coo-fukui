@@ -9,6 +9,7 @@ from visdom import Visdom
 import numpy as np
 import csv
 import os
+import torchvision
 
 
 

@@ -44,6 +44,7 @@ class Config:
         parser.add_argument("--time_stamp", type=str, default=auto_time_stamp, help="时间戳")
         parser.add_argument("--pth_G", type=str, default=None, help="从指定存档开始G")
         parser.add_argument("--pth_D", type=str, default=None, help="从指定存档开始D")
+        parser.add_argument("--pth", type=str, default=None, help="从指定存档开始Model")
         parser.add_argument("--epoch_start", type=int, default=0, help="起始训练轮数")
         parser.add_argument("--epoch_end", type=int, default=201, help="训练的总轮数")
         parser.add_argument("--dataset_name", type=str, default="dataset_AB", help="数据集名称")
