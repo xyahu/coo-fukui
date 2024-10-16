@@ -21,11 +21,12 @@ class SVM(nn.Module):
         output = self.linear(x)
         return output
 
-class SVM_Vector(Base_Model_Vector):
+class SVM_Vector(Base_Model_Vector): 
     def __init__(self, c, m):
         super(SVM_Vector,self).__init__(c, m)
         
     def compute_loss(self, y_pred, y_truth, x_input=None):
+        """ SVM Vector use hinge loss to optimize SVM. """
         return torch.mean(torch.clamp(1 - y_pred.squeeze() * y_truth, min=0))
     
 if __name__ == "__main__":

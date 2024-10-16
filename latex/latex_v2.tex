@@ -3,6 +3,9 @@
 \usepackage[margin=1in]{geometry}  % 调整页面边距
 \usepackage{titling}               % 控制标题位置
 \usepackage{booktabs}              % 表格宏包
+\usepackage{amssymb}
+\usepackage{ctex}                  % 中文支持包
+% \usepackage{xeCJK}
 
 \setlength{\droptitle}{-3.0cm}     % 将标题上移3.0厘米
 
@@ -13,18 +16,18 @@
 \begin{document}
 
 \twocolumn[
-\maketitle
+	\maketitle
 
-\begin{center}
-\begin{abstract}
-This is Abstract chapter.
-\end{abstract}
-\end{center}
-\vspace{0.5cm}  % 调整摘要与正文之间的间距
+	\begin{center}
+		\begin{abstract}
+			This is Abstract chapter.
+		\end{abstract}
+	\end{center}
+	\vspace{0.5cm}  % 调整摘要与正文之间的间距
 ]
 
 \section{Introduce}
-This is Introduce chapter.
+This is Introduce chapter.啊啊
 
 \section{Related Works}
 This is Related Works chapter.
@@ -32,22 +35,26 @@ This is Related Works chapter.
 \section{Method}
 This is Method chapter.
 
+\[
+	y = \mathbf{W}^{\mathbb{T}}x + b
+\]
+
 \section{Experiments}
 This is Experiments chapter.
 % 插入三线表
 \begin{table}[h]
-    \centering
-    \caption{three line table sample}
-    \begin{tabular}{cccc}
-    \toprule
-    Params count & 128×128 & 256×256 & 512×512 \\
-    \midrule
-    Channel=1 & 16385 & 65537 & 262145 \\
-    Channel=2 & 32769 & 131073 & 524289 \\
-    Channel=3 & 49153 & 196609 & 786433 \\
-    \bottomrule
-    \end{tabular}
-    \end{table}
+	\centering
+	\caption{three line table sample}
+	\begin{tabular}{cccc}
+		\toprule
+		Params count & 128×128 & 256×256 & 512×512 \\
+		\midrule
+		Channel=1    & 16385   & 65537   & 262145  \\
+		Channel=2    & 32769   & 131073  & 524289  \\
+		Channel=3    & 49153   & 196609  & 786433  \\
+		\bottomrule
+	\end{tabular}
+\end{table}
 
 \section{Conclusion}
 This is Conclusion chapter.
