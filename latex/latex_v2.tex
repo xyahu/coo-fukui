@@ -5,12 +5,17 @@
 \usepackage{booktabs}              % 表格宏包
 \usepackage{amssymb}
 \usepackage{ctex}                  % 中文支持包
+\usepackage{authblk}			   % 多作者
 % \usepackage{xeCJK}
-
 \setlength{\droptitle}{-3.0cm}     % 将标题上移3.0厘米
 
 \title{Medical Image Classification using Support Vector Machine}
-\author{Your Name}
+\author[1] {Your Name}
+\author[1] {Teacher Author}
+% \author[1,3]{Third Author}
+\affil[1]{University of Fukui, 3-9-1 Bunkyo, Fukui, 910-0019, Japan}
+% \affil[2]{Department of Electrical Engineering, University of Y}
+% \affil[3]{Research Institute, Company Z}
 \date{2024.11.30}
 
 \begin{document}
@@ -27,24 +32,35 @@
 ]
 
 \section{Introduce}
-This is Introduce chapter.啊啊
+支持向量机（SVM）是一种强大的监督式学习算法，主要用于分类和回归任务。它通过在特征空间中寻找最大间隔超平面来区分不同类别，有效提高模型的泛化能力。
 
 \section{Related Works}
-This is Related Works chapter.
+SVM很早应用于文本分类任务\cite{hearst_support_1998}，如垃圾邮件检测和网页分类。在人脸识别、手写识别\cite{bahlmann_online_2002}和医学图像分析\cite{gautam_investigation_2021}等领域，SVM由于其高效的分类能力被广泛应用。支持向量机的开发和使用历史是机器学习领域中一个成功的案例，展示了理论研究如何转化为实际应用的工具。
 
 \section{Method}
-This is Method chapter.
+支持向量机（SVM）用于分类任务的目标是找到一个决策边界,即一个可以最大化地分隔不同类别数据点的超平面。超平面可以用以下等式表达：
 
 \[
-	y = \mathbf{W}^{\mathbb{T}}x + b
+	f(x) = \mathbf{W}^\mathbb{T} x + b
 \]
 
+其中，\(f(x)\) 是模型的预测输出，输出一个实数值，表示样本 \(x_i\) 落在特定类别的置信度。\( \mathbf{W} \) 是超平面的法向量，\( b \) 是偏置项，\( x \) 是输入的特征向量。
+
+SVM通过解决一个优化问题来找到最优的\( \mathbf{W} \)和\( b \)，该优化问题旨在最大化两个类别之间的边缘。SVM 通常使用合页损失（Hinge Loss）来训练分类器，这是一种鼓励找到具有最大边缘的决策边界的方法。合页损失函数定义为：
+\[
+	L(y_i, f(x_i)) = \max(0, 1 - y_i f(x_i))
+\]
+其中，\( f(x_i) = \mathbf{W}^\mathbb{T} x_i + b \) 是模型的预测输出，输出一个实数值，表示样本 \(x_i\) 落在特定类别的置信度。\( y_i \) 是实际的类标签，它的取值为 \{-1, 1\}。
+SVM 的工作原理是构造一个超平面，该超平面不仅可以正确分类所有训练数据点，还能最大化类别间的间隔。本研究将构建一个最基本的支持向量机，使用合页损失优化该向量机来实现一个医学图像的分类器。
+
 \section{Experiments}
-This is Experiments chapter.
+本研究将SVM用于医学图像分类任务，旨在构建一个SVM，输入一个医学图像，判断该医学图像为PET图像还是CT图像。In this study, the Lung PET or CT scan data\cite{li_large-scale_2020} were powered by the National Cancer Institute Cancer Imagine Program (CIP).该数据集涵盖了355名受试者的肺部扫描图像，共计251135张扫描图。这些数据主要收集自2009年至2011年间，包括了每位受试者的性别、年龄、体重、吸烟史及癌症诊断分类信息。数据集中的所有扫描数据均以DICOM格式存储。本研究利用Windows操作系统中的MicroDicom软件处理这251135份扫描数据。数据集中的受试者按癌症类型进行标记：类型A代表腺癌，类型B代表小细胞癌，类型E代表大细胞癌，类型G代表鳞状细胞癌。在该数据集中，并非所有受试者的资料均包含PET扫描与CT扫描。因此，本研究筛选仅使用了被诊断为小细胞癌（B类）的38名受试者的扫描数据，这些数据包括PET扫描、多种CT扫描以及融合增强后的扫描图像。在这38名受试者中，仅有9人同时拥有PET扫描与CT扫描的数据，共计12930张扫描图像。通过精确筛选，将切片位置误差不超过0.2mm的PET/CT扫描定义为配对扫描数据，最终获取928张扫描图像。这464对PET/CT肺部扫描数据图像，供本研究使用。
+
 % 插入三线表
 \begin{table}[h]
 	\centering
-	\caption{three line table sample}
+	\caption{Experimental Dataset Partition}
+	\label{tab:dataset_partition}
 	\begin{tabular}{cccc}
 		\toprule
 		Params count & 128×128 & 256×256 & 512×512 \\
@@ -56,7 +72,32 @@ This is Experiments chapter.
 	\end{tabular}
 \end{table}
 
+% 插入三线表
+\begin{table}[h]
+	\centering
+	\caption{Number of Parameters to be Optimized in SVM Decision Functions for Different Input Image Sizes}
+	\label{tab:params_count}
+	\begin{tabular}{cccc}
+		\toprule
+		Params count & 128×128 & 256×256 & 512×512 \\
+		\midrule
+		Channel=1    & 16385   & 65537   & 262145  \\
+		Channel=2    & 32769   & 131073  & 524289  \\
+		Channel=3    & 49153   & 196609  & 786433  \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+表\ref{tab:params_count}中，展示了构建针对不同尺寸的输入图像，构建出的决策函数中需要优化的参数数量。我们将得到的464对PET/CT肺部扫描数据导出为256×256像素的RGB格式的PNG图像。因此，本文需要构建输入数据$x$为$256 \times 256 \times 3=196608$维度的列向量的决策函数，因此$\mathbf{W}^\mathbb{T}$应为196608的行向量，和一个偏置项$b$。
+
+
+
+
+
 \section{Conclusion}
 This is Conclusion chapter.
+
+\bibliographystyle{unsrt}
+\bibliography{svm}
 
 \end{document}

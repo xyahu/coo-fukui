@@ -192,11 +192,13 @@ class Base_Model_Vector(CVS_Module):
                 metrics_total['total'] += total
                 
                 # 将张量转换为列表,并格式化
-                outputs_value = outputs.tolist()
-                labels_value = labels.tolist()
-                formatted_outputs_value =[float(f'{num:.2f}') for num in outputs_value]
+                # outputs_value = outputs.tolist()
+                # labels_value = labels.tolist()
+                # formatted_outputs_value =[float(f'{num:.2f}') for num in outputs_value]
                 formatted_accuracy_value = float(f'{(metrics_total['correct']/metrics_total['total']):.4f}')
 
+                formatted_loss_value_in_batch = float(f'{(loss.item()):.4f}')
+                formatted_accuracy_value_in_batch = float(f'{(metrics_total['correct']/metrics_total['total']):.4f}')
                 # # 使用 map 和 lambda 函数格式化输出
                 # formatted_outputs_value = [list(map(lambda x: f"{x:.2f}", row)) for row in outputs_value]
                 # formatted_labels_value = [list(map(lambda x: f"{x:.2f}", row)) for row in labels_value]
@@ -205,6 +207,14 @@ class Base_Model_Vector(CVS_Module):
                 # 更新进度条信息
                 loop_train.set_description(f"Train Epoch [{epoch}/{self.config.opt.epoch_end}]")
                 loop_train.set_postfix(loss=loss.item(),correct=metrics_total['correct'],total=metrics_total['total'],accuracy=formatted_accuracy_value)
+                
+                train_in_batch_dict = {'index': i,
+                                       'epoch': epoch,
+                                       'loss': formatted_loss_value_in_batch,
+                                       'correct': metrics_total['correct'],
+                                       'total': metrics_total['total'],
+                                       'accuracy': formatted_accuracy_value_in_batch}
+                self.save_dict_as_csv(train_in_batch_dict,'log_train_in_batch.csv')
                 
                 # Determine approximate time left
                 batches_done = epoch * self.train_data_length + i + 1
@@ -307,17 +317,26 @@ class Base_Model_Vector(CVS_Module):
             metrics_total['total'] += total
             
             # 将张量转换为列表,并格式化
-            outputs_value = outputs.tolist()
-            labels_value = labels.tolist()
-            formatted_outputs_value =[float(f'{num:.2f}') for num in outputs_value]
+            # outputs_value = outputs.tolist()
+            # labels_value = labels.tolist()
+            # formatted_outputs_value =[float(f'{num:.2f}') for num in outputs_value]
             formatted_accuracy_value = float(f'{(metrics_total['correct']/metrics_total['total']):.4f}')
 
+            formatted_loss_value_in_batch = float(f'{(loss.item()):.4f}')
+            formatted_accuracy_value_in_batch = float(f'{(metrics_total['correct']/metrics_total['total']):.4f}')
             # 更新进度条信息
             loop_valid.set_description(f"Valid Epoch [{self.epoch_done}/{self.config.opt.epoch_end}]")
             # loop_valid.set_postfix(loss=loss.item(),accuracy=accuracy)
             loop_valid.set_postfix(loss=loss.item(),correct=metrics_total['correct'],total=metrics_total['total'],accuracy=formatted_accuracy_value)
             
 
+            valid_in_batch_dict =  {'index': i,
+                                    'epoch': self.epoch_done,
+                                    'loss': formatted_loss_value_in_batch,
+                                    'correct': metrics_total['correct'],
+                                    'total': metrics_total['total'],
+                                    'accuracy': formatted_accuracy_value_in_batch}
+            self.save_dict_as_csv(valid_in_batch_dict,'log_valid_in_batch.csv')
             # 这里可以设置是否启用web服务（Visdom）
             # self.logger.log(losses=train_indexs, images=train_images)
             
