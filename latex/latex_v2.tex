@@ -54,23 +54,25 @@ SVM通过解决一个优化问题来找到最优的\( \mathbf{W} \)和\( b \)，
 SVM 的工作原理是构造一个超平面，该超平面不仅可以正确分类所有训练数据点，还能最大化类别间的间隔。本研究将构建一个最基本的支持向量机，使用合页损失优化该向量机来实现一个医学图像的分类器。
 
 \section{Experiments}
-本研究将SVM用于医学图像分类任务，旨在构建一个SVM，输入一个医学图像，判断该医学图像为PET图像还是CT图像。In this study, the Lung PET or CT scan data\cite{li_large-scale_2020} were powered by the National Cancer Institute Cancer Imagine Program (CIP).该数据集涵盖了355名受试者的肺部扫描图像，共计251135张扫描图。这些数据主要收集自2009年至2011年间，包括了每位受试者的性别、年龄、体重、吸烟史及癌症诊断分类信息。数据集中的所有扫描数据均以DICOM格式存储。本研究利用Windows操作系统中的MicroDicom软件处理这251135份扫描数据。数据集中的受试者按癌症类型进行标记：类型A代表腺癌，类型B代表小细胞癌，类型E代表大细胞癌，类型G代表鳞状细胞癌。在该数据集中，并非所有受试者的资料均包含PET扫描与CT扫描。因此，本研究筛选仅使用了被诊断为小细胞癌（B类）的38名受试者的扫描数据，这些数据包括PET扫描、多种CT扫描以及融合增强后的扫描图像。在这38名受试者中，仅有9人同时拥有PET扫描与CT扫描的数据，共计12930张扫描图像。通过精确筛选，将切片位置误差不超过0.2mm的PET/CT扫描定义为配对扫描数据，最终获取928张扫描图像。这464对PET/CT肺部扫描数据图像，供本研究使用。
+本研究将SVM用于医学图像分类任务，旨在构建一个SVM，输入一个医学图像，判断该医学图像为PET图像还是CT图像。In this study, the Lung PET or CT scan data\cite{li_large-scale_2020} were powered by the National Cancer Institute Cancer Imagine Program (CIP).该数据集涵盖了355名受试者的肺部扫描图像，共计251135张扫描图。这些数据主要收集自2009年至2011年间，包括了每位受试者的性别、年龄、体重、吸烟史及癌症诊断分类信息。数据集中的所有扫描数据均以DICOM格式存储。本研究利用Windows操作系统中的MicroDicom软件处理这251135份扫描数据。数据集中的受试者按癌症类型进行标记：类型A代表腺癌，类型B代表小细胞癌，类型E代表大细胞癌，类型G代表鳞状细胞癌。在该数据集中，并非所有受试者的资料均包含PET扫描与CT扫描。因此，本研究筛选仅使用了被诊断为小细胞癌（B类）的38名受试者的扫描数据，这些数据包括PET扫描、多种CT扫描以及融合增强后的扫描图像。在这38名受试者中，仅有9人同时拥有PET扫描与CT扫描的数据，共计12930张扫描图像。通过精确筛选，将切片位置误差不超过0.2mm的PET/CT扫描定义为配对扫描数据，最终获取928张扫描图像。这464对PET/CT肺部扫描数据图像，供本研究使用。本研究实验中的数据划分情况如表\ref{tab:dataset_partition_1}.
 
 % 插入三线表
 \begin{table}[h]
 	\centering
-	\caption{Experimental Dataset Partition}
-	\label{tab:dataset_partition}
-	\begin{tabular}{cccc}
+	\caption{Dataset Partition of Experiment 1}
+	\label{tab:dataset_partition_1}
+	\begin{tabular}{ccc}
 		\toprule
-		Params count & 128×128 & 256×256 & 512×512 \\
+		Params count & For Validation & For Training \\
 		\midrule
-		Channel=1    & 16385   & 65537   & 262145  \\
-		Channel=2    & 32769   & 131073  & 524289  \\
-		Channel=3    & 49153   & 196609  & 786433  \\
+		Lung PET & 24   & 440 \\
+		Lung CT  & 24   & 440 \\
+		Total    & 48   & 880 \\
 		\bottomrule
 	\end{tabular}
 \end{table}
+
+支持向量机针对不同尺寸的输入图像，构建出的决策函数中需要优化的参数数量如表\ref{tab:params_count}。我们将得到的464对PET/CT肺部扫描数据导出为256×256像素的RGB格式的PNG图像。因此，本文需要构建输入数据为$256 \times 256 \times 3=196608$维度的列向量的决策函数，因此$\mathbf{W}^\mathbb{T}$应为$196608$的行向量，和$1$个偏置项$b$。
 
 % 插入三线表
 \begin{table}[h]
@@ -88,7 +90,7 @@ SVM 的工作原理是构造一个超平面，该超平面不仅可以正确分�
 	\end{tabular}
 \end{table}
 
-表\ref{tab:params_count}中，展示了构建针对不同尺寸的输入图像，构建出的决策函数中需要优化的参数数量。我们将得到的464对PET/CT肺部扫描数据导出为256×256像素的RGB格式的PNG图像。因此，本文需要构建输入数据$x$为$256 \times 256 \times 3=196608$维度的列向量的决策函数，因此$\mathbf{W}^\mathbb{T}$应为196608的行向量，和一个偏置项$b$。
+
 
 
 
