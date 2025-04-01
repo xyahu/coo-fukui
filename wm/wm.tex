@@ -1,0 +1,88 @@
+\documentclass[twocolumn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}  % 调整页面边距
+\usepackage{titling}               % 控制标题位置
+\usepackage{booktabs}              % 表格宏包
+\usepackage{amssymb}
+\usepackage{ctex}                  % 中文支持包
+% \usepackage{xeCJK}
+% \setmainlanguage{japanese} % 设置文档主语言为日语
+% \setCJKmainfont{IPAゴシック} % 设置CJK字体，可以替换为其他字体
+
+\usepackage{authblk}			   % 多作者
+\usepackage{graphicx}
+\usepackage{ragged2e}           % 摘要两端对齐
+% \usepackage{tabularx}			% 表格宽度
+% \usepackage{xeCJK}
+\setlength{\droptitle}{-3.0cm}     % 将标题上移3.0厘米
+
+\title{ダイナミックなグラフネットワークに基づくアルツハイマー病予測アルゴリズム研究}
+\author[1] {WANG Ming}
+% \author[1] {Teacher Author}
+% \author[1,3]{Third Author}
+\affil[1]{University of Tokyo, 1-1-1 Chiyoda, Tokyo, 000-00, Japan}
+% \affil[2]{Department of Electrical Engineering, University of Y}
+% \affil[3]{Research Institute, Company Z}
+\date{ }
+
+\begin{document}
+
+\twocolumn[
+	\maketitle
+
+	% \begin{center}
+	% 	\begin{abstract}
+	% 		\begin{justify}
+	% 			% One of the most famous examples of a Tuned Mass Damper (TMD) is in Taipei 101, a skyscraper in Taiwan. This building uses a massive TMD weighing 660 tons, installed near the top, to reduce swaying caused by strong winds and earthquakes. The TMD consists of a large steel sphere suspended by cables and supported by hydraulic dampers. When external forces cause the building to sway, the TMD moves in the opposite direction, absorbing the vibration energy and stabilizing the structure. This system, costing approximately $4$\$ million USD, has proven to be both effective and a worthwhile investment 
+	% 		\end{justify}
+	% 	\end{abstract}
+	% \end{center}
+	\vspace{0.5cm}  % 调整摘要与正文之间的间距
+]
+
+\section{研究背景}
+アルツハイマー病（AD）は、\cite{hampel_alzheimers_2018} \cite{jia_dementia_2020} \cite{teipel_effect_2018} \cite{wingo_integrating_2021} \cite{world_health_organization_risk_2019}記憶障害や認知機能低下を主な症状とする非可逆的な神経変性疾患である。高齢化が進む中、AD患者数は増加の一途をたどり、公衆衛生や社会医療システムに多大な負担をもたらしている。統計によれば、全世界で約4,000万人がADを患っており、2050年にはこの数字が2倍になると予想されている。このため、ADの治療法が未確立の現状において、早期診断と介入の重要性が高まっている。
+現在の予測手法では、主に畳み込みニューラルネットワーク（CNN）に基づくモデルが用いられているが、被験者間の潜在的な相関性を無視しているケースが多く、これが予測精度向上の課題となっている。また、医療データにおけるクラス不均衡やラベル不完全性も、従来手法の限界として挙げられる。これらの課題を克服するためには、個体間の相関性を効果的にモデル化し、多モーダルデータやラベルが少ない状況でも機能する動的グラフネットワーク予測アルゴリズムの開発が求められている。
+
+\section{先行研究}
+アルツハイマー病予測の分野では、多くの神経ネットワークを用いた研究が行われてきた。特に、CNNを基盤とした研究は一定の成果を上げていますが、これらの手法では被験者間の相関情報が十分に考慮されておらず、この情報はAD診断において非常に重要である。一方で、グラフニューラルネットワーク（GNN）は個体間の関係や複雑な構造データを扱う上で独自の利点を持ち、サンプル間の相関性を効果的にモデル化することができる。
+いくつかの研究では、グラフ構造を用いたAD予測が試みられていますが、多グラフ融合や動的グラフ学習には依然として課題が残っている。特に、多モーダルデータの融合、ラベル不完全性やクラス不均衡の処理において、さらなる改善が必要とされている。例えば、Wingoら（2021年）は、人間の脳タンパク質群と全ゲノム関連データを統合する手法を提案し、ADの発症メカニズムに新たなタンパク質を示しましたが、個体間のネットワーク相関を十分に考慮していない。
+
+\section{研究目的}
+本研究の主な目的は、動的グラフネットワークに基づくアルツハイマー病予測アルゴリズムを開発することである。本研究では、多モーダルデータを基盤に、個体間の相関情報を活用することで、ADの早期予測の精度を高めることを目指する。具体的には、以下の目標を掲げる。
+1.	動的グラフ学習を活用して、従来のモデルで十分に活用されていないサンプル間の相関情報を効果的にモデル化する。
+2.	少ラベルおよびクラス不均衡の状況下においても高い予測性能を達成するモデルを構築する。
+3.	多グラフ特徴抽出および加重特徴融合を通じて、多モーダルデータの利用効率を最大化し、AD患者、軽度認知障害（MCI）患者、および正常被験者（NC）を正確に区別する。
+4.	上記の成果をもとに、臨床における早期診断および介入を支援するための効果的な技術基盤を提供する。
+
+
+\subsection{研究方法}
+\subsubsection{データセット選択と前処理}
+\begin{itemize}
+	\item 	データセット: NACCおよびTADPOLEデータセットを使用。
+	\item 	前処理: データ標準化と多モーダルデータ間のマッチング処理。
+\end{itemize}
+\subsubsection{グラフ構造の構築}
+\begin{itemize}
+	\item 	動的グラフ学習を活用し、最適なグラフ構造を設計。
+\end{itemize}
+\subsubsection{モデル設計}
+\begin{itemize}
+	\item 	多グラフ特徴抽出および加重融合を採用し、自適応的なノード拡張モジュールを開発。
+\end{itemize}
+\subsubsection{評価方法}
+\begin{itemize}
+	\item 	AUC、ACCなどの指標を使用し、モデルの性能を評価。
+\end{itemize}
+
+
+
+\iffalse
+	\section*{Acknowledage}
+	We would like to express our sincere gratitude to the National Cancer Institute Cancer Imaging Program for generously making their high-quality medical imaging dataset available and authorized for use on the Internet, providing indispensable resources for the smooth conduct of this research.
+\fi
+
+\bibliographystyle{unsrt}
+\bibliography{wmref}
+
+\end{document}

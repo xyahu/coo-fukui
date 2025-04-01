@@ -1,0 +1,193 @@
+\documentclass[twocolumn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}  % 调整页面边距
+\usepackage{titling}               % 控制标题位置
+\usepackage{booktabs}              % 表格宏包
+\usepackage{amssymb}
+% \usepackage{ctex}                  % 中文支持包
+\usepackage{authblk}			   % 多作者
+\usepackage{graphicx}
+\usepackage{ragged2e}           % 摘要两端对齐
+% \usepackage{tabularx}			% 表格宽度
+% \usepackage{xeCJK}
+\setlength{\droptitle}{-3.0cm}     % 将标题上移3.0厘米
+
+\title{Medical Image Synthesis from CT to PET using Convolutional Neural Network}
+\author[1] {Deng Xiaoyu}
+% \author[1] {Teacher Author}
+% \author[1,3]{Third Author}
+\affil[1]{University of Fukui, 3-9-1 Bunkyo, Fukui, 910-0019, Japan}
+% \affil[2]{Department of Electrical Engineering, University of Y}
+% \affil[3]{Research Institute, Company Z}
+\date{ }
+
+\begin{document}
+
+\twocolumn[
+	\maketitle
+
+	\begin{center}
+		\begin{abstract}
+			\begin{justify}
+				U-Net, a deep learning architecture, has gained widespread application in medical image processing due to its exceptional performance and efficient structural design. This architecture enhances traditional convolutional neural networks with its symmetric "U" shape, making it extensively utilized for applications such as image denoising, medical image registration, attenuation correction, lesion segmentation, and facial image restoration. This study leverages the U-Net architecture for cross-modality conversion from computed tomography to positron emission tomography images.
+				Preliminary results demonstrate rapid performance improvements within the initial training epochs, achieving stability and high-quality reconstruction as training progresses. Despite observable fluctuations in performance metrics, which highlight the model's challenges in generalizing across the inherent variability of medical imaging datasets, the U-Net model exhibits robustness in image reconstruction. With further adjustments and optimizations, there is potential for enhanced performance in future applications, promising advances in the practical application of deep learning techniques in medical imaging.
+			\end{justify}
+		\end{abstract}
+	\end{center}
+	\vspace{0.5cm}  % 调整摘要与正文之间的间距
+]
+
+\section{Introduce}
+U-Net is a deep learning architecture initially designed for medical image segmentation tasks and has become widely popular in the field of medical image processing due to its outstanding performance and efficient structure. The architecture of U-Net is an improvement over the typical convolutional neural network (CNN), featuring a symmetric "U" shape that includes a contracting path (encoder) and an expanding (decoder) path. A key feature of U-Net is its use of skip connections, which connect feature maps from the contracting path to corresponding layers in the expanding path. Such a design allows the network to utilize more precise spatial information during the upsampling process, which is crucial for enhancing the accuracy of segmentation boundaries, especially where the delineation of structures in medical images is critically important.
+
+
+\section{Related Works}
+Since its introduction by Olaf and colleagues \cite{navab_u-net_2015}, U-Net has been widely used due to its structural advantages and excellent performance in applications such as image denoising \cite{armanious_medgan_2020}, medical image registration \cite{singh_automated_2023}, and attenuation correction \cite{liu_deep_2018}. It is also applied to various other image segmentation tasks including lesion segmentation \cite{du_medical_2020} and face image restoration \cite{zeng_swin-casunet_2022}.
+
+In experiments using U-Net or other image segmentation and reconstruction models, it is crucial to evaluate the accuracy, reliability, and effectiveness of the model's performance. Various quantitative metrics commonly used in U-Net related experiments help researchers and developers understand the model's performance in specific tasks.
+
+The Structural Similarity Index Measure (SSIM) is a complex metric used to measure the structural similarity between two images. It considers aspects such as luminance, contrast, and structural information of the images. The SSIM value ranges from -1 to 1, where 1 indicates perfect similarity. This metric is particularly useful in medical image segmentation as it provides a detailed reflection of the visual and structural quality of the images.
+
+The Multi-Scale Structural Similarity Index Measure (MS-SSIM) is an extension of SSIM that evaluates image similarity across multiple scales, offering a more comprehensive assessment of image quality. This is especially useful when dealing with medical images that vary significantly in resolution.
+
+Visual Information Fidelity (VIF) is a metric for image quality assessment based on natural scene statistics and human visual system characteristics. VIF attempts to simulate the human eye's perception of image quality and considers the degree of information loss during the image transmission process. VIF operates from an information-theoretic perspective, comparing the preservation of information between the original and distorted images.
+
+Peak Signal-to-Noise Ratio (PSNR) is another widely used metric to measure the quality of image reconstruction. It is employed in fields like image and video compression and other forms of signal processing to assess the quality of an image reconstruction or compression by comparing the similarity between the original and processed images.
+
+Mean Squared Error (MSE) is one of the most commonly used metrics to evaluate the quality of an image reconstruction. It calculates the average of the squares of the pixel intensity differences between the reconstructed image and the original image. The lower the MSE value, the smaller the error in image reconstruction and the higher the quality.
+
+% This study will utilize the standard U-Net model to perform cross-modality conversion tasks from CT to PET images and demonstrate the model's performance using the above metrics.
+
+\section{Method}
+U-Net's architecture is designed symmetrically, with a contracting path (Encoder) to capture context and a symmetric expanding path (Decoder) that enables precise localization. This study aims to construct a standard U-Net, a convolutional neural network, to develop a cross-modality medical image converter from CT to PET images. The model will be optimized using a specific loss function suitable for this type of image conversion task.
+
+\subsection{Encoder}
+The encoder follows the typical architecture of a convolutional network. It consists of repeated application of two $3\times3$ convolutions, each followed by a rectified linear unit (ReLU) and a $2\times2$ max pooling operation with stride 2 for downsampling. At each downsampling step, the number of feature channels is doubled. The convolution operation in U-Net can be described by the following equation:
+\[
+	I' = \sum_{i,j} (I * K)(i,j) + b
+\]
+where \(I\) represents the input image, \(K\) is the convolution kernel, \(b\) is the bias, and \(I'\) is the output feature map.
+
+Max pooling in the encoder is used to reduce the spatial dimensions of the input feature maps:
+\[
+	P(x,y) = \max(I(x + i, y + j))
+\]
+where \(P(x,y)\) is the pooled output, and \(I(x + i, y + j)\) represents the input in the neighborhood around location \((x, y)\).
+
+
+
+\subsection{Decoder}
+The decoder includes a series of upsampling and convolution operations. Each step in the expanding path includes an upsampling of the feature map followed by a $2\times2$ convolution that halves the number of feature channels, a concatenation with the correspondingly cropped feature map from the contracting path, and two $3\times3$ convolutions, each followed by a ReLU. Up sampling in the expanding path uses transposed convolutions to increase the size of the feature map:
+\[
+	U = K^T * I
+\]
+where \(K^T\) is the transposed convolution kernel and \(U\) is the upsampled output.
+
+
+\section{Experiments}
+This study employs the U-Net architecture for cross-modality medical image conversion tasks, specifically to construct a U-Net that inputs a CT image and converts it into a corresponding PET image. In this research, the lung PET or CT scan data were powered by the National Cancer Institute Cancer Imaging Program (CIP) \cite{li_large-scale_2020}. The dataset encompasses 251,135 lung scan images from 355 subjects, primarily collected between 2009 and 2011, including each subject's gender, age, weight, smoking history, and cancer diagnosis classification. All scan data in the dataset are stored in DICOM format. This study processed these 251,135 scan data using the MicroDicom software on a Windows operating system. The subjects in the dataset are labeled according to the type of cancer: Type A for adenocarcinoma, Type B for small cell carcinoma, Type E for large cell carcinoma, and Type G for squamous cell carcinoma. Not all subjects' data include both PET and CT scans. Therefore, this study selected only the scan data of 38 subjects diagnosed with small cell carcinoma (Type B), which include PET scans, various CT scans, and fusion-enhanced scan images. Among these 38 subjects, only 9 had both PET and CT scans, totaling 12,930 scan images. Through precise selection, PET/CT scans with a slice position error of no more than 0.2 mm were defined as paired scan data, ultimately obtaining 928 scan images. These 464 pairs of PET/CT lung scan images are used for this study.
+
+In this study, a standard U-Net model was constructed, with a parameter scale of approximately 50 million. We exported the obtained 464 pairs of PET/CT lung scan data as 256x256 pixel RGB format PNG images, which were independently divided into training and testing datasets. The specific division of the dataset is shown in the following table\ref{tab:dataset_partition_1}.
+
+% 插入三线表
+\begin{table}[h]
+	\centering
+	\caption{Dataset Partition of Experiment}
+	\label{tab:dataset_partition_1}
+	\begin{tabular}{cccc}
+		\toprule
+		Params count     & Test & Train & Total \\
+		\midrule
+		Lung PET/CT Pair & 64   & 400   & 464   \\
+		Total Images     & 128  & 800   & 928   \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+In this experiment, the standard U-Net model is employed to synthesize positron emission tomography (PET) images from computed tomography (CT) images as inputs. Only the mean squared error (MSE) loss is used as the loss function, capitalizing on the benefits of L2 loss. The model optimizer used is the Adam optimizer, with a learning rate (lr) set at 0.001. This relatively low learning rate assists the model in steadily approaching the global optimum during the training process. The best experimental results are shown in Table \ref{exp_result}.
+
+\begin{table}[h]
+	\centering
+	\caption{SSIM,PSNR,MSE Results of Experiment}
+	\label{tab:exp_result}
+	\begin{tabular}{cccc}
+		\toprule
+		Best Result & SSIM   & PSNR    & MSE    \\
+		\midrule
+		Train       & 0.7854 & 17.6365 & 0.0237 \\
+		Test        & 0.7943 & 17.8871 & 0.0235 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+
+To enhance the model's generalization ability and mitigate overfitting issues, L2 regularization is employed with a weight decay parameter set at 0.001. The experiment records data over 200 training epochs, including Loss, SSIM, multi-scale SSIM, VIF, PSNR, and MSE. Tests are conducted after each epoch, with changes in the Loss, training and testing SSIM, MS-SSIM, VIF, PSNR, and MSE metrics as indicated in the respective tables. The model demonstrates commendable performance on both the training and testing datasets.
+
+% TODO: \usepackage{graphicx} required
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1.0\linewidth]{u-net/LOSS}
+	\caption[loss_train]{Loss Line Figure of All Epoch in Train Process}
+	\label{fig:loss_train}
+\end{figure}
+
+Figure \ref{fig:loss_train} shows that during the initial few training epochs, the loss rapidly decreases from approximately 0.36 to close to 0.29. This indicates that the model quickly improved its fit to the training data, making the learning process highly effective during this stage. After the rapid decline, the loss values tend to stabilize, fluctuating around 0.29. This trend suggests that the model may have reached a stable state in its training, where further learning yields limited performance improvements. Although the loss values are relatively stable, there are still minor fluctuations at certain epochs, such as around the 50th, 100th, and 175th epochs. These fluctuations could be due to random factors in the training process, such as random selection of batch data, adjustments in the learning rate, or external disturbances. Overall, the loss values remain relatively low and stable over 200 training epochs, indicating that the model possesses a certain degree of generalization ability and has maintained good stability throughout the training process.
+
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1.0\linewidth]{u-net/SSIM}
+	\caption[ssim]{SSIM Line Figure of All Epoch in Train and Test Process}
+	\label{fig:ssim}
+\end{figure}
+
+Figure \ref{fig:ssim} shows that the SSIM values rapidly increase during the initial training phase (first 25 epochs), rising from near zero to above 0.6. This indicates that the U-Net model quickly learned the mapping relationship between CT and PET images, showing significant initial learning effects. After this rapid growth, the SSIM values on both the training and testing sets tend to stabilize, mainly fluctuating around 0.7. This demonstrates that the model maintained high image reconstruction quality during the continued training process. Throughout the training period, the SSIM values on the training set are usually higher than those on the testing set, which might be a sign of slight overfitting, suggesting that the model may be overly optimized for the training data and slightly less generalized for unseen test data.
+
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1.0\linewidth]{u-net/MS_SSIM}
+	\caption[msssim]{MS-SSIM Line Figure of All Epoch in Train and Test Process}
+	\label{fig:msssim}
+\end{figure}
+
+Figure \ref{fig:msssim} illustrates that, for both the training and testing datasets, the MS-SSIM values rapidly improve within the initial few epochs. This shows that the model effectively captured the key features and structural information necessary for the conversion from CT to PET images early in the learning process. After the initial rapid improvement, the MS-SSIM values enter a phase of more stable fluctuations, as reflected in both the training and testing data. The MS-SSIM values for the training data are slightly higher than those for the testing data, a common phenomenon in machine learning models, which may indicate slight overfitting. After about 50 epochs, despite some fluctuations, the MS-SSIM values generally remain at a high level, especially above 0.7, indicating that the model has a good ability to capture the structural similarity of the images. The MS-SSIM values on the testing dataset are generally slightly lower than those on the training dataset, but the gap between them is small, indicating that the model also performs well on unseen data.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1.0\linewidth]{u-net/VIF}
+	\caption[vif]{VIF Line Figure of All Epoch in Train and Test Process}
+	\label{fig:vif}
+\end{figure}
+
+As shown in Figure \ref{fig:vif}, during the initial few epochs, the Visual Information Fidelity (VIF) index rapidly increases, indicating that the model quickly adapts to the data, effectively reconstructing visual information from CT images into PET images. This is a positive sign, demonstrating the model's efficiency in learning and capturing key features for the conversion between the two image types. After the initial growth, the VIF values exhibit similar fluctuation patterns in both training and testing processes, likely due to variability encountered with different data batches. The figure reveals significant peaks and troughs at certain epochs, such as around the 75th, 100th, and 175th, which may relate to specific images or noisy images in the dataset. The VIF curves for training and testing generally converge throughout the experiment, although the testing curve is usually slightly lower than the training curve. This trend indicates that the model has some degree of generalization capability, although this capability may have limitations.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1.0\linewidth]{u-net/PSNR}
+	\caption[psnr]{PSNR Line Figure of All Epoch in Train and Test Process}
+	\label{fig:psnr}
+\end{figure}
+
+Figure \ref{fig:psnr} displays that, for both training (blue line) and testing (red line) sets, the Peak Signal-to-Noise Ratio (PSNR) values rapidly increase during the initial epochs, suggesting that the model quickly begins to effectively reconstruct PET images from CT images. The rapid improvement initially may be related to swift adjustments in the model parameters, significantly enhancing the quality of the reconstructed images. Following the initial growth, the PSNR values tend to stabilize but exhibit several significant fluctuations during both training and testing processes. These fluctuations might reflect changes in performance when the model encounters difficult samples within the data or due to optimization algorithms (such as learning rate adjustments). Despite these fluctuations, PSNR generally remains at a relatively high level, indicating that the model reconstructs PET images well and shows consistent performance throughout the training and testing periods. The PSNR curves for the training and testing sets are very close, indicating good generalization capability of the model to unseen data. Nonetheless, the testing curve occasionally dips below the training curve, which might be due to particularly challenging image samples in the test set.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1.0\linewidth]{u-net/MSE}
+	\caption[mse]{MSE Line Figure of All Epoch in Train and Test Process}
+	\label{fig:mse}
+\end{figure}
+
+From Figure \ref{fig:mse}, it can be observed that the Mean Squared Error (MSE) for both the training and testing sets rapidly decreases from initial values of around 0.20 to below 0.05 during the initial few epochs. This indicates that the model quickly and effectively adapts to the image conversion from CT to PET, with a rapid learning rate. After the quick decline, the training and testing MSE tend to stabilize, although there are several pronounced peaks, particularly around the 125th and 175th epochs. These peaks may reflect performance fluctuations when the model processes certain specific data batches or anomalous image samples. Besides occasional peaks, MSE remains at a low level most of the time, showing relative stability of the model throughout the training and testing processes. This suggests that the model can reliably reconstruct images in most cases. The MSE curves for the training and testing sets are very close, indicating good generalization capability of the model to unseen data. This close trend also suggests that there are no significant issues with overfitting.
+
+
+\section{Conclusion}
+This research thoroughly explores the development history, technical principles, and practical applications of U-Net, and conducts an empirical study in medical image classification tasks. The experimental results demonstrate that the U-Net model shows high efficiency and stability in the task of converting CT to PET images. With further adjustments and optimizations, it is hoped that even better performance can be achieved in future applications.
+
+\section*{Acknowledage}
+We would like to express our sincere gratitude to the National Cancer Institute Cancer Imaging Program for generously making their high-quality medical imaging dataset available and authorized for use on the Internet, providing indispensable resources for the smooth conduct of this research.
+
+\bibliographystyle{unsrt}
+\bibliography{unet_ref}
+
+\end{document}
