@@ -1,0 +1,88 @@
+\usepackage[utf8]{inputenc}
+\documentclass[twocolumn]{article}
+\usepackage[margin=1in]{geometry}  % 调整页面边距
+% \usepackage[autodetect-engine,jis]{luatexja}
+\usepackage{titling}               % 控制标题位置
+\usepackage{booktabs}              % 表格宏包
+\usepackage{amssymb}
+\usepackage{ctex}                  % 中文支持包
+\usepackage{authblk}			   % 多作者
+\usepackage{graphicx}
+\usepackage{ragged2e}           % 摘要两端对齐
+% \usepackage{tabularx}			% 表格宽度
+
+\setlength{\droptitle}{-3.0cm}     % 将标题上移3.0厘米
+
+\title{PET-to-CT画像生成のための輝度感受性カスケード生成ネットワークに関する研究計画}
+\author[1] {Xiaoyu Deng}
+% \author[1,2] {Kouki Nagamune}
+% \author[1] {Hiroki Takada}
+% \author[1] {Teacher Author}
+% \author[1,3]{Third Author}
+\affil[1]{University of Fukui, 3-9-1 Bunkyo, Fukui, 910-0017, Japan}
+% \affil[2]{University of Hyogo, 2167 Shosha, Himeji, Hyogo, 670-2280, Japan}
+% \affil[3]{Research Institute, Company Z}
+\date{ }
+
+\begin{document}
+\twocolumn[
+	\maketitle
+	\begin{center}
+		% \begin{abstract}
+			\begin{justify}
+				% U-Net, a widely recognized deep learning architecture, excels in medical image processing tasks due to its symmetric encoder-decoder structure and skip connections, effectively preserving spatial information critical for precise segmentation. Although enlarging U-Net through depth increments, additional channels, improved skip connections, or integrating attention mechanisms such as Transformers can boost performance, it also introduces computational complexity and performance bottlenecks.
+
+				% This study proposes a multi-stage cascaded framework utilizing sequentially connected simple encoder-decoder modules for the CT-to-PET medical image translation task, preserving simplicity within each encoder-decoder structure. The effectiveness of the framework is validated experimentally using publicly available lung cancer PET-CT datasets, assessing performance across various stages. Metrics including SSIM, PSNR, and MAE demonstrate significant improvements in image reconstruction quality, particularly at higher cascade stages, achieving peak SSIM of 0.9255 and PSNR of 28.9168 dB.
+
+				% Visual comparison further indicates that despite high quantitative metric scores, certain visual artifacts remain due to transposed convolution operations, suggesting that pixel-level metrics alone may not comprehensively reflect perceptual quality. The proposed multi-stage cascaded U-Net model, therefore, presents strong potential for medical imaging applications, particularly in synthesizing high-quality PET images from CT scans, with recommendations for future integration of visual quality assessments and expert evaluations.
+			\end{justify}
+		% \end{abstract}
+	\end{center}
+	\vspace{0.5cm}  % 调整摘要与正文之间的间距
+]
+
+\section{研究背景と意義}
+陽電子放射断層撮影とコンピュータ断層撮影（PET/CT）は、一回の検査で代謝および解剖情報を同時に提供できるが、装置の価格が高く、放射線被曝量が比較的多いため、資源が限られた地域での普及は難しい。
+近年、医用画像のクロスモーダル変換において生成敵対ネットワーク（GAN）が大きな可能性を示しているが、現状の手法ではテクスチャがぼやける、高輝度領域の強度が歪む、性能が一定の水準で飽和するなどの課題が残されている。本研究では、これらの課題を克服するため、三段階エンコーダ・デコーダの連鎖構造と輝度感受性損失を組み合わせた\emph{輝度感受性カスケードGAN}を提案し、PETからCTへの画像合成精度を向上させることを目指す。本研究を通じ、多段階生成方式および輝度適応制約が臨床的に有用な疑似PET画像生成へ与える影響を体系的に検証し、低コストの早期スクリーニング技術の基盤形成を目指す。
+
+\section{研究目的}
+\textbf{理論的目的：} 解釈可能なクロスモーダル・カスケード生成フレームワークを構築し、多段階分解および輝度感受性損失が構造およびテクスチャ再現精度に与える効果を明らかにする。
+
+\textbf{アルゴリズム的目的：} 多段階生成器、マルチスケール輝度モデリング、適応的重み付けスケジューリング戦略を設計・最適化し、高輝度・低輝度領域の詳細再現性を改善する。
+
+\textbf{応用的目的：} 複数施設の公開および臨床脳PET/CTデータを用いてモデルの頑健性・転移可能性を検証し、早期脳卒中スクリーニング、腫瘍定量評価、アルツハイマー病前駆状態の検出支援への応用価値を評価する。
+
+\section{研究方法}
+\subsection{データ収集および前処理}
+本研究では、米国国立がん研究所（NCI）癌画像プログラム（CIP）の肺PET/CTデータセットを利用する。このデータセットは355名の患者から収集された合計251,135枚のDICOM画像および性別、年齢、体重、喫煙歴、診断カテゴリーなどのメタデータを含む。腫瘍サブタイプは腺癌（A）、小細胞癌（B）、大細胞癌（E）、扁平上皮癌（G）として分類されている。PETおよびCTの両モダリティで撮影されたのは一部であり、本研究ではB型小細胞癌患者38名のペア画像を選択し、造影画像を含めて合計464ペアのPET/CT画像を解析対象とする。全データは匿名化され、RGB 256×256画素に再サンプリングされる。
+
+\subsection{手法の最適化}
+既存の問題点を解決するため、クロスモーダル変換においてより効果的なアーキテクチャおよび学習手法を検討する。
+\begin{enumerate}
+	\item 医用画像変換タスクに特化した多段階生成器および識別器の設計を行う。
+	\item カスケード拡張フレームワークおよび注意機構を導入し、重要な解剖学的構造に焦点を当てる。
+	\item 知覚損失および敵対的損失を融合した複合損失関数を採用し、視覚的リアリズムおよび構造的類似性を向上させる。
+	\item マルチタスク学習および転移学習を導入し、モデルの汎化性能および収束速度を改善する。
+\end{enumerate}
+
+\section{研究の革新点}
+\begin{enumerate}
+	\item \textbf{多段階拡張性学習の解析：} カスケード生成器の特性を解析し、段階を無秩序に積み重ねた場合に生じる過学習を防ぎながら性能を最大化する方法を提案する。
+	\item \textbf{輝度感受性機能の導入：} 適応重み付けを行う輝度マスクを導入し、高密度の皮質骨と低密度の実質組織テクスチャを効果的に再現する。
+\end{enumerate}
+
+% \section{Expected Outcomes}
+% \textbf{Algorithmic.} A high‑performance luminosity‑aware cascaded GAN framework and a reproducible data‑pre‑processing pipeline.
+
+% \textbf{Scholarly.} Submission of at least two papers to top‑tier venues such as \emph{MICCAI} or \emph{IEEE TMI}, and filing of one Chinese or Japanese invention patent.
+
+
+
+
+
+% \section*{Acknowledage}
+% We would like to express our sincere gratitude to the National Cancer Institute Cancer Imaging Program for generously making their high-quality medical imaging dataset available and authorized for use on the Internet, providing indispensable resources for the smooth conduct of this research.
+
+\bibliographystyle{unsrt}
+\bibliography{unet_ref}
+\end{document}

@@ -1,0 +1,88 @@
+\documentclass[twocolumn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}  % 调整页面边距
+\usepackage{titling}               % 控制标题位置
+\usepackage{booktabs}              % 表格宏包
+\usepackage{amssymb}
+% \usepackage{ctex}                  % 中文支持包
+\usepackage{authblk}			   % 多作者
+\usepackage{graphicx}
+\usepackage{ragged2e}           % 摘要两端对齐
+% \usepackage{tabularx}			% 表格宽度
+\usepackage{xeCJK}
+\setlength{\droptitle}{-3.0cm}     % 将标题上移3.0厘米
+
+\title{Research Proposal on Brightness-Sensitive Cascaded Generative Network for PET-to-CT Generation Method}
+\author[1] {Xiaoyu Deng}
+% \author[1,2] {Kouki Nagamune}
+% \author[1] {Hiroki Takada}
+% \author[1] {Teacher Author}
+% \author[1,3]{Third Author}
+\affil[1]{University of Fukui, 3-9-1 Bunkyo, Fukui, 910-0017, Japan}
+% \affil[2]{University of Hyogo, 2167 Shosha, Himeji, Hyogo, 670-2280, Japan}
+% \affil[3]{Research Institute, Company Z}
+\date{ }
+
+\begin{document}
+
+\twocolumn[
+	\maketitle
+
+	% 	\begin{center}
+	% 		\begin{abstract}
+	% 			\begin{justify}
+	% 				% U-Net, a widely recognized deep learning architecture, excels in medical image processing tasks due to its symmetric encoder-decoder structure and skip connections, effectively preserving spatial information critical for precise segmentation. Although enlarging U-Net through depth increments, additional channels, improved skip connections, or integrating attention mechanisms such as Transformers can boost performance, it also introduces computational complexity and performance bottlenecks.
+
+	% 				% This study proposes a multi-stage cascaded framework utilizing sequentially connected simple encoder-decoder modules for the CT-to-PET medical image translation task, preserving simplicity within each encoder-decoder structure. The effectiveness of the framework is validated experimentally using publicly available lung cancer PET-CT datasets, assessing performance across various stages. Metrics including SSIM, PSNR, and MAE demonstrate significant improvements in image reconstruction quality, particularly at higher cascade stages, achieving peak SSIM of 0.9255 and PSNR of 28.9168 dB.
+
+	% 				% Visual comparison further indicates that despite high quantitative metric scores, certain visual artifacts remain due to transposed convolution operations, suggesting that pixel-level metrics alone may not comprehensively reflect perceptual quality. The proposed multi-stage cascaded U-Net model, therefore, presents strong potential for medical imaging applications, particularly in synthesizing high-quality PET images from CT scans, with recommendations for future integration of visual quality assessments and expert evaluations.
+	% 			\end{justify}
+	% 		\end{abstract}
+	% 	\end{center}
+	% 	\vspace{0.5cm}  % 调整摘要与正文之间的间距
+]
+
+\section{Background}
+Positron emission tomography (PET) and computed tomography (CT) imaging delivers metabolic and anatomical information; however, the PET/CT scanners in a single examination are expensive, entail a relatively high radiation dose, and are seldom available in resource‑limited settings. In recent years, generative adversarial networks (GANs) \cite{radford_unsupervised_2015} have shown strong promise for cross‑modal medical‑image translation, yet prevailing methods still exhibit blurred textures, intensity distortions in high‑brightness regions, and overall performance plateaus. To address these limitations, we propose a \emph{Brightness sensitive cascaded GAN} that exploits a cascaded encoder–decoder chain extension framework together with a brightness‑sensitive loss to enhance CT‑to‑PET synthesis. The study systematically explores how multi‑stage generation and brightness‑adaptive constraints contribute to clinically usable pseudo‑PET images, providing a technical basis for low‑cost early screening.
+
+\section{Objectives}
+\textbf{Theoretical.} Develop an interpretable cross‑modal cascaded generation framework and elucidate how multi‑stage decomposition and brightness‑sensitive loss jointly improve structural and textural fidelity.
+
+\textbf{Algorithmic.} Design and optimise multi‑cascade generators, multi‑scale luminosity modelling, and adaptive weight‑scheduling strategies to better reconstruct both hyper‑ and hypo‑intense details.
+
+\textbf{Applied.} Validate the model’s robustness and transferability on multi‑centre public and clinical brain PET/CT cohorts, assessing its auxiliary value in early stroke screening, tumour quantification, and prodromal Alzheimer’s disease detection.
+
+\section{Method}
+\subsection{Dataset}
+This work employs the lung PET/CT dataset from the National Cancer Institute’s Cancer Imaging Program (CIP)\cite{li_large-scale_2020}, comprising 251,135 DICOM images from 355 patients, along with metadata such as sex, age, body weight, smoking history, and diagnostic category. Tumour sub‑types are annotated as adenocarcinoma (A), small‑cell carcinoma (B), large‑cell carcinoma (E), and squamous‑cell carcinoma (G). Because only a subset underwent both modalities, we selected 38 patients with type B small‑cell carcinoma, each providing paired PET and CT scans and contrast‑enhanced images, for a total of 464 aligned PET/CT pairs. All data were anonymised and resampled to RGB $256\times256$.
+
+\subsection{Method Optimisation}
+To overcome current limitations, we investigate more efficient architectures and training paradigms for cross‑modal conversion:
+\begin{enumerate}
+	\item Building on DSGGAN\cite{wang_dsg-gandual-stage-generator-based_2024} or U-Net\cite{navab_u-net_2015} like methods, we tailor generator and discriminator designs to medical‑image translation tasks.
+	\item Cascaded extension framework and attention mechanisms are incorporated to focus the network on salient anatomical structures.
+	\item Composite loss functions that blend perceptual and adversarial terms are explored to enhance visual realism and structural similarity.
+	\item Multi‑task and transfer‑learning strategies are adopted to strengthen generalisation and accelerate convergence.
+\end{enumerate}
+
+\section{Innovations}
+\begin{enumerate} \item \textbf{Stage‑wise of multi-stage extension learnability:} A cascaded generator is analysed to harness its benefits while mitigating the over‑fitting that indiscriminate stacking can cause.
+	\item \textbf{Multi‑scale brightness sensitive function:} We introduce brightness masks with adaptive weights to restore both high‑density cortical bone and low‑density parenchymal textures.
+\end{enumerate}
+
+\section{Expected Outcomes}
+\textbf{Algorithmic.} A high‑performance luminosity‑aware cascaded GAN framework and a reproducible data‑pre‑processing pipeline.
+
+\textbf{Scholarly.} Submission of at least two papers to venues such as \emph{JACIII} or \emph{IEEE TMI}, or filing of one Japanese invention patent.
+
+
+
+
+
+% \section*{Acknowledage}
+% We would like to express our sincere gratitude to the National Cancer Institute Cancer Imaging Program for generously making their high-quality medical imaging dataset available and authorized for use on the Internet, providing indispensable resources for the smooth conduct of this research.
+
+\bibliographystyle{unsrt}
+\bibliography{rp_ref}
+
+\end{document}
