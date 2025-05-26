@@ -35,7 +35,7 @@
 \author{\bf{\normalsize{Xiaoyu Deng${^1}{^*}$, Kouki Nagamune${^2}$, Hiroki Takada${^1}$}}\\ % The author should be in Upper case
 	\\
 	\normalsize{$^1$University of Fukui, 3-9-1 Bunkyo, Fukui, 910-0017, Japan}\\
-	\normalsize{$^2$University of Hyogo, 2167 Shosha, Himeji, Hyogo, 670-2280, Japan} \\
+	\normalsize{$^2$University of Hyogo, 2167 Shosha, Himeji, Hyogo, 671-2280, Japan} \\
 	\normalsize{$^*$Corresponding author, E-MAIL: xyxy.jp@gmail.com}\\
 	\\}
 
@@ -77,12 +77,11 @@ Since the introduction of U-Net by Olaf et al. \cite{navab_u-net_2015}, it has b
 Armanious et al. \cite{armanious_medgan_2020} proposed an end-to-end GAN-based framework for medical image-to-image translation, demonstrating its performance in PET-CT translation, MR motion artifact correction, and PET denoising tasks. Singh et al. \cite{singh_automated_2023} presented a U-Net-based automated medical image registration method, employing GAN to generate pseudo-CT images from non-attenuation-corrected PET images, enhancing coronary angiography registration accuracy. Liu et al. \cite{liu_deep_2018} developed a method for generating pseudo-CT images for attenuation correction from single non-attenuation-corrected 18F-FDG PET images. Du et al. \cite{du_medical_2020} reviewed six U-Net-based methods for medical image segmentation, including lung nodules, cardiac, and brain segmentation tasks. Zeng et al. \cite{zeng_swin-casunet_2022} used a two-stage cascaded U-Net for facial image restoration, indicating potential advantages of multi-stage U-Net models for image generation tasks. Singh and Liu applied models with fine-tuned modules in medical image registration and attenuation correction, achieving notable results. While Armanious and Zeng utilized cascaded U-Net structures, multi-stage cascaded U-Net models for medical image generation remain underexplored. This study evaluates multi-stage cascaded U-Net models for CT-to-PET image conversion tasks using several metrics.
 
 The Structural Similarity Index \cite{zhou_wang_image_2004} (SSIM) measures structural similarity between two images, considering luminance, contrast, and structural information, ranging from -1 to 1, with 1 indicating identical images. The Multi-scale SSIM (MS-SSIM) extends SSIM across multiple scales, better assessing image quality across varying resolutions. Peak Signal-to-Noise Ratio \cite{hore_image_2010} (PSNR) measures image reconstruction quality by comparing original and processed images, widely used in signal processing applications. Mean Absolute Error\cite{chai_root_2014} (MAE) computes the average pixel intensity difference between reconstructed and original images, insensitive to outliers compared to Mean Squared Error (MSE), thus selected as an evaluation metric given pixel scaling between 0 and 1 in PyTorch frameworks.
-
 %-------------------------------------------------------------------------
 % % TODO: \usepackage{graphicx} required
 \begin{figure*}[t!]
 	\centering
-	\includegraphics[width=1.0\linewidth]{u-net/lung/Encoder-Decoder-5layer-250406}
+	\includegraphics[width=1.0\linewidth]{figures/lung/Encoder-Decoder-5layer-250406}
 	\caption[architecture]{Schematic Diagram of Data Flow Within the Model. The PET image is shown on the left, and the CT image on the right. The blue modules correspond to the encoder architecture, while the orange modules represent the decoder architecture. The upper portion of the figure illustrates the fundamental structures of the encoder blocks, decoder blocks, and visualization blocks. The connections in the lower portion indicate the skip connections.}
 	\label{fig:Encoder_Decoder_Pair}
 \end{figure*}
@@ -269,7 +268,7 @@ Metrics including SSIM, PSNR, and MSE were recorded over 200 training epochs, re
 
 \begin{figure*}[h]
 	\centering
-	\includegraphics[width=1.0\linewidth]{u-net/lung/csvimg_lung_mnv3/ssim_comparison_8.png}
+	\includegraphics[width=1.0\linewidth]{figures/lung/csvimg_lung_mnv3/ssim_comparison_8.png}
 	\caption[ssim]{Evolution of SSIM During Testing Across Epochs. The horizontal axis represents epoch numbers from 0 to 200), and the vertical axis indicates the SSIM values achieved by the model on the test dataset.}
 	\label{fig:ssim}
 \end{figure*}
@@ -278,7 +277,7 @@ Figure \ref{fig:ssim} illustrates SSIM rapidly increasing in initial training (f
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=1.0\linewidth]{u-net/lung/csvimg_lung_mnv3/psnr_comparison.png}
+	\includegraphics[width=1.0\linewidth]{figures/lung/csvimg_lung_mnv3/psnr_comparison.png}
 	\caption[psnr]{Evolution of PSNR During Testing Across Epochs. The horizontal axis represents epoch numbers from 0 to 200, and the vertical axis indicates the PSNR values in dB achieved by the model on the test dataset.}
 	\label{fig:psnr}
 \end{figure}
@@ -287,7 +286,7 @@ PSNR (Figure \ref{fig:psnr}) showed rapid initial improvements with subsequent f
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=1.0\linewidth]{u-net/lung/csvimg_lung_mnv3/mae_comparison.png}
+	\includegraphics[width=1.0\linewidth]{figures/lung/csvimg_lung_mnv3/mae_comparison.png}
 	\caption[mae]{Evolution of MAE During Testing Across Epochs. The horizontal axis represents epoch numbers from 0 to 200, and the vertical axis indicates the MAE values achieved by the model on the test dataset.}
 	\label{fig:mae}
 \end{figure}
@@ -298,7 +297,7 @@ Despite these encouraging numbers, a lower MAE does not necessarily translate in
 
 \begin{figure*}[h]
 	\centering
-	\includegraphics[width=1.0\linewidth]{u-net/lung/lung_compare_folder/lung_compare_13.png}
+	\includegraphics[width=1.0\linewidth]{figures/lung/lung_compare_folder/lung_compare_13.png}
 	% \caption[lung_compare]
 	\caption[lung_compare]{The figure displayed here showcases PET images generated by various models, compared alongside real CT and PET images. The odd rows present the complete paired PET-CT images, while the even rows provide magnified views of specific regions within these pairs. Each model utilizes the CT image located at the extreme left as the input. The real PET images positioned at the extreme right serve as references for comparison. }
 	\label{fig:lung_compare}
